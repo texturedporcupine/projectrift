@@ -71,7 +71,7 @@ class Settings(BaseSettings):
         return v
 
 
-settings = Settings()  # type: ignore[call-arg]
+settings = Settings()
 
 
 def outreach_oauth_configured() -> bool:

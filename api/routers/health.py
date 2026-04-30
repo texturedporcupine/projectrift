@@ -1,7 +1,7 @@
 """Health and stats endpoints."""
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -31,7 +31,7 @@ async def health_check(request: Request) -> HealthResponse:
     return HealthResponse(
         status="healthy",
         database="connected",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(timezone.utc),
         version=__version__,
     )
 

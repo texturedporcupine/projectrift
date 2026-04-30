@@ -1,9 +1,11 @@
 """Pydantic schemas for API requests and responses."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from api.constants import ALLOWED_EVENT_TYPES
 
 
 class RootResponse(BaseModel):
@@ -18,6 +20,10 @@ class RootResponse(BaseModel):
 
 def _empty_metadata() -> Dict[str, Any]:
     return {}
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 class EventPayload(BaseModel):
@@ -53,16 +59,9 @@ class EventPayload(BaseModel):
     @field_validator("event_type")
     @classmethod
     def validate_event_type(cls, v: str) -> str:
-        allowed_types = [
-            "call_dial",
-            "call_connect",
-            "meeting_booked",
-            "meeting_attended",
-            "email_sent",
-        ]
-        if v not in allowed_types:
+        if v not in ALLOWED_EVENT_TYPES:
             raise ValueError(
-                f"Unknown event type: {v}. Allowed: {', '.join(allowed_types)}"
+                f"Unknown event type: {v}. Allowed: {', '.join(ALLOWED_EVENT_TYPES)}"
             )
         return v
 
@@ -153,7 +152,7 @@ class CurrentStats(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str
     error_code: Optional[str] = None
-    timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=_utc_now)
 
     model_config = ConfigDict(
         json_schema_extra={

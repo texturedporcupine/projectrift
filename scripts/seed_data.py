@@ -12,6 +12,8 @@ import requests
 from dotenv import load_dotenv
 from faker import Faker
 
+from api.constants import ALLOWED_EVENT_TYPES
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
@@ -19,15 +21,19 @@ load_dotenv()
 
 fake = Faker()
 
-EVENT_TYPES = [
-    ("call_dial", 0.50),
-    ("call_connect", 0.20),
-    ("email_sent", 0.25),
-    ("meeting_booked", 0.04),
-    ("meeting_attended", 0.01),
-]
+EVENT_TYPE_WEIGHTS = {
+    "call_dial": 0.50,
+    "call_connect": 0.20,
+    "email_sent": 0.25,
+    "meeting_booked": 0.04,
+    "meeting_attended": 0.01,
+}
 
 SOURCES = ["nooks", "outreach", "manual", "zapier"]
+
+EVENT_TYPES = tuple(EVENT_TYPE_WEIGHTS)
+if set(EVENT_TYPES) != set(ALLOWED_EVENT_TYPES):
+    raise RuntimeError("Seed event weights must match ALLOWED_EVENT_TYPES")
 
 
 def _api_base() -> str:
@@ -40,7 +46,7 @@ def _api_base() -> str:
 
 def generate_event():
     event_type = random.choices(
-        [e[0] for e in EVENT_TYPES], weights=[e[1] for e in EVENT_TYPES]
+        list(EVENT_TYPE_WEIGHTS.keys()), weights=list(EVENT_TYPE_WEIGHTS.values())
     )[0]
     metadata = {"prospect_name": fake.name(), "company": fake.company()}
     if event_type in ["call_dial", "call_connect"]:

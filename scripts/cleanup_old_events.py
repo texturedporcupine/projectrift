@@ -4,7 +4,6 @@
 import argparse
 import os
 import sys
-from datetime import datetime, timedelta
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -19,18 +18,26 @@ from database.queries import DatabaseQueries  # noqa: E402
 
 def cleanup_old_events(days: int, dry_run: bool) -> None:
     print(f"Retention: keep last {days} days")
-    cutoff = datetime.now() - timedelta(days=days)
-    print(f"Cutoff: {cutoff.strftime('%Y-%m-%d %H:%M:%S')}")
 
     import psycopg2
 
     conn = psycopg2.connect(os.environ["DATABASE_URL"])
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM raw_events WHERE created_at < %s", (cutoff,))
-    (count,) = cur.fetchone()
+    cur.execute(
+        """
+        SELECT
+            NOW() - (%s::integer * INTERVAL '1 day') AS cutoff,
+            COUNT(*) AS count
+        FROM raw_events
+        WHERE created_at < NOW() - (%s::integer * INTERVAL '1 day')
+        """,
+        (days, days),
+    )
+    cutoff, count = cur.fetchone()
     cur.close()
     conn.close()
 
+    print(f"Cutoff: {cutoff.strftime('%Y-%m-%d %H:%M:%S %Z')}")
     print(f"Matching rows: {count}")
     if dry_run:
         return

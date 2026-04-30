@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from contextlib import contextmanager
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, Generator, List, Optional
 
 import psycopg2
@@ -140,15 +140,14 @@ class DatabaseQueries:
             return [dict(r) for r in cur.fetchall()]
 
     def cleanup_old_events(self, days: int = 90) -> int:
-        cutoff_date = datetime.now() - timedelta(days=days)
         with self._transaction() as (_, cur):
             cur.execute(
                 """
                 DELETE FROM raw_events
-                WHERE created_at < %s
+                WHERE created_at < NOW() - (%s::integer * INTERVAL '1 day')
                 RETURNING id
                 """,
-                (cutoff_date,),
+                (days,),
             )
             return cur.rowcount
 

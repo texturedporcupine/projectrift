@@ -8,6 +8,7 @@ from datetime import datetime
 
 import pytest
 
+from api.constants import ALLOWED_EVENT_TYPES
 from database.queries import DatabaseQueries
 
 
@@ -59,16 +60,8 @@ class TestGamificationRules:
 
     def test_all_event_types_have_rules(self, db):
         """Test that all event types have gamification rules"""
-        event_types = [
-            "call_dial",
-            "call_connect",
-            "meeting_booked",
-            "meeting_attended",
-            "email_sent",
-        ]
-
         try:
-            for event_type in event_types:
+            for event_type in ALLOWED_EVENT_TYPES:
                 rule = db.get_gamification_rule(event_type)
                 assert rule is not None, f"Missing rule for {event_type}"
                 assert rule["gold_value"] >= 0
