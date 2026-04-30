@@ -10,14 +10,10 @@ py_version = 310
 testpaths = ["tests"]
 addopts = "-q --cov=api --cov=app --cov=database --cov-report=term-missing"
 
-[tool.flake8]
-max-line-length = 88
-extend-ignore = ["E203", "W503"]
-exclude = [".git", "__pycache__", ".pytest_cache", ".mypy_cache"]
-
 [tool.mypy]
 python_version = "3.10"
 warn_unused_configs = true
 ignore_missing_imports = true
 check_untyped_defs = true
+disable_error_code = ["import-untyped"]
 packages = ["api", "app", "database"]

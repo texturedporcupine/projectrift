@@ -13,7 +13,9 @@ from database.queries import DatabaseQueries
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1", tags=["health"], responses={503: {"description": "Unavailable"}})
+router = APIRouter(
+    prefix="/api/v1", tags=["health"], responses={503: {"description": "Unavailable"}}
+)
 
 
 @router.get("/health", response_model=HealthResponse, summary="Health check")
@@ -34,7 +36,9 @@ async def health_check(request: Request) -> HealthResponse:
     )
 
 
-@router.get("/stats/current", response_model=CurrentStats, summary="Current gamification stats")
+@router.get(
+    "/stats/current", response_model=CurrentStats, summary="Current gamification stats"
+)
 @limiter.limit(get_rate_limit_for_endpoint("stats"))
 async def get_current_stats(request: Request) -> CurrentStats:
     _ = request

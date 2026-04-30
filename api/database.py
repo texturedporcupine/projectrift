@@ -74,12 +74,19 @@ class DatabaseConnectionPool:
                 self.return_connection(conn)
 
 
-db_pool = DatabaseConnectionPool(min_connections=2, max_connections=10)
+_db_pool: DatabaseConnectionPool | None = None
+
+
+def get_db_pool() -> DatabaseConnectionPool:
+    global _db_pool
+    if _db_pool is None:
+        _db_pool = DatabaseConnectionPool(min_connections=2, max_connections=10)
+    return _db_pool
 
 
 async def check_database_health() -> bool:
     try:
-        with db_pool.get_cursor() as cur:
+        with get_db_pool().get_cursor() as cur:
             cur.execute("SELECT 1")
             result = cur.fetchone()
             return result is not None
@@ -89,4 +96,7 @@ async def check_database_health() -> bool:
 
 
 def cleanup_database_connections() -> None:
-    db_pool.close_all_connections()
+    global _db_pool
+    if _db_pool is not None:
+        _db_pool.close_all_connections()
+        _db_pool = None

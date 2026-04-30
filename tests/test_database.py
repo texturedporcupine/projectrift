@@ -4,7 +4,7 @@ Tests database queries, connections, and data integrity
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import pytest
 

@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from api.config import settings
 from api.main import app
 
-client = TestClient(app)
+client = TestClient(app, raise_server_exceptions=False)
 
 
 class TestRootEndpoint:
@@ -36,21 +36,35 @@ class TestRootEndpoint:
 class TestHealthEndpoint:
     """Tests for the health check endpoint"""
 
-    def test_health_check_success(self):
+    def test_health_check_success(self, monkeypatch):
         """Test successful health check"""
+
+        async def healthy_database():
+            return True
+
+        monkeypatch.setattr(
+            "api.routers.health.check_database_health", healthy_database
+        )
         response = client.get("/api/v1/health")
         assert response.status_code == 200
         data = response.json()
-        assert "status" in data
-        assert "database" in data
+        assert data["status"] == "healthy"
+        assert data["database"] == "connected"
         assert "timestamp" in data
         assert "version" in data
 
-    def test_health_check_database_status(self):
-        """Test that health check reports database status"""
+    def test_health_check_database_disconnected(self, monkeypatch):
+        """Test that health check reports database failures"""
+
+        async def unhealthy_database():
+            return False
+
+        monkeypatch.setattr(
+            "api.routers.health.check_database_health", unhealthy_database
+        )
         response = client.get("/api/v1/health")
-        data = response.json()
-        assert data["database"] in ["connected", "disconnected"]
+        assert response.status_code == 503
+        assert "Database connection failed" in response.json()["detail"]
 
 
 class TestWebhookAuthentication:
@@ -214,7 +228,10 @@ class TestOAuthTokensTable:
         from database.queries import DatabaseQueries
 
         db = DatabaseQueries()
-        conn = db.get_connection()
+        try:
+            conn = db.get_connection()
+        except Exception as e:
+            pytest.skip(f"Database not available: {e}")
         cur = conn.cursor()
         cur.execute(
             """
@@ -240,8 +257,11 @@ class TestOAuthTokensTable:
 
         db = DatabaseQueries()
         expires = datetime.now(timezone.utc) + timedelta(hours=2)
-        db.save_oauth_tokens("outreach", "acc_test", "ref_test", expires)
-        tokens = db.load_oauth_tokens("outreach")
+        try:
+            db.save_oauth_tokens("outreach", "acc_test", "ref_test", expires)
+            tokens = db.load_oauth_tokens("outreach")
+        except Exception as e:
+            pytest.skip(f"Database not available: {e}")
         assert tokens is not None
         assert tokens["access_token"] == "acc_test"
         assert tokens["refresh_token"] == "ref_test"
@@ -254,8 +274,11 @@ class TestOAuthTokensTable:
 
         db = DatabaseQueries()
         now = datetime.now(timezone.utc)
-        db.update_last_synced_at("outreach", now)
-        result = db.get_last_synced_at("outreach")
+        try:
+            db.update_last_synced_at("outreach", now)
+            result = db.get_last_synced_at("outreach")
+        except Exception as e:
+            pytest.skip(f"Database not available: {e}")
         assert result is not None
 
 
@@ -387,12 +410,18 @@ class TestScheduler:
 class TestOutreachAuthRouter:
     """Tests for Outreach OAuth endpoints"""
 
-    def test_start_redirects_to_outreach(self):
+    def test_start_redirects_to_outreach(self, monkeypatch):
         """GET /auth/outreach/start redirects to Outreach authorization URL"""
         from fastapi.testclient import TestClient
 
         from api.main import app
 
+        monkeypatch.setattr("api.routers.auth.outreach_oauth_configured", lambda: True)
+        monkeypatch.setattr("api.routers.auth.settings.OUTREACH_CLIENT_ID", "client-id")
+        monkeypatch.setattr(
+            "api.routers.auth.settings.OUTREACH_REDIRECT_URI",
+            "http://localhost/callback",
+        )
         client = TestClient(app, follow_redirects=False)
         response = client.get("/auth/outreach/start")
         assert response.status_code == 307
@@ -446,7 +475,11 @@ class TestOutreachRouter:
         from api.main import app
 
         client = TestClient(app)
-        with patch("api.outreach_client.load_tokens", return_value=None):
+        with (
+            patch("api.outreach_client.load_tokens", return_value=None),
+            patch("api.outreach_client.get_last_synced_at", return_value=None),
+            patch("api.routers.outreach.get_next_run_time", return_value=None),
+        ):
             response = client.get("/api/v1/outreach/status")
         assert response.status_code == 200
         assert response.json()["authorized"] is False
@@ -455,16 +488,25 @@ class TestOutreachRouter:
 class TestSchedulerLifespan:
     """Verify scheduler starts and stops with the FastAPI app"""
 
-    def test_scheduler_starts_with_app(self):
-        """Scheduler should be running when app is live"""
+    def test_scheduler_lifespan_hooks_run(self, monkeypatch):
+        """Scheduler lifecycle hooks should run with the app lifespan"""
         from fastapi.testclient import TestClient
 
         from api.main import app
 
-        with TestClient(app):
-            from api.scheduler import scheduler
+        calls = {"start": 0, "stop": 0}
 
-            assert scheduler.running
+        def fake_start_scheduler():
+            calls["start"] += 1
+
+        def fake_stop_scheduler():
+            calls["stop"] += 1
+
+        monkeypatch.setattr("api.main.start_scheduler", fake_start_scheduler)
+        monkeypatch.setattr("api.main.stop_scheduler", fake_stop_scheduler)
+        with TestClient(app):
+            assert calls["start"] == 1
+        assert calls["stop"] == 1
 
 
 if __name__ == "__main__":

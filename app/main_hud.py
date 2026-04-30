@@ -11,11 +11,7 @@ from dotenv import load_dotenv
 from app.components.avatar import render_avatar
 from app.components.gold_counter import render_gold_counter
 from app.components.kda_display import render_event_counts, render_kda_display
-from app.components.xp_bar import (
-    render_level_badge,
-    render_rank_badge,
-    render_xp_bar,
-)
+from app.components.xp_bar import render_level_badge, render_rank_badge, render_xp_bar
 from database.queries import DatabaseQueries
 from database.ranks import rank_index
 
@@ -156,9 +152,9 @@ def main() -> None:
 
     prev_stats = st.session_state.previous_stats
 
-    celebrate = check_for_level_up(current_level, prev_stats["current_level"]) or rank_up_sound(
-        rank, prev_stats["rank"]
-    )
+    celebrate = check_for_level_up(
+        current_level, prev_stats["current_level"]
+    ) or rank_up_sound(rank, prev_stats["rank"])
     if celebrate:
         st.balloons()
 

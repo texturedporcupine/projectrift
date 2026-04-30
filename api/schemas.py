@@ -16,6 +16,10 @@ class RootResponse(BaseModel):
     endpoints: Dict[str, str]
 
 
+def _empty_metadata() -> Dict[str, Any]:
+    return {}
+
+
 class EventPayload(BaseModel):
     source: str = Field(
         ...,
@@ -26,7 +30,7 @@ class EventPayload(BaseModel):
         ..., description="Type of sales event", min_length=1, max_length=50
     )
     metadata: Optional[Dict[str, Any]] = Field(
-        default_factory=dict, description="Additional event metadata"
+        default_factory=_empty_metadata, description="Additional event metadata"
     )
     timestamp: Optional[datetime] = Field(
         default=None, description="Event timestamp (defaults to now if not provided)"
@@ -64,7 +68,9 @@ class EventPayload(BaseModel):
 
     @field_validator("metadata")
     @classmethod
-    def validate_metadata_size(cls, v: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    def validate_metadata_size(
+        cls, v: Optional[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
         if v is not None and len(str(v)) > 5000:
             raise ValueError("Metadata too large (max 5000 characters)")
         return v

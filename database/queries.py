@@ -28,9 +28,7 @@ class DatabaseQueries:
         return psycopg2.connect(self.connection_string)
 
     @contextmanager
-    def _transaction(
-        self, *, dict_rows: bool = False
-    ) -> Generator[tuple, None, None]:
+    def _transaction(self, *, dict_rows: bool = False) -> Generator[tuple, None, None]:
         conn = self.get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor if dict_rows else None)
         try:

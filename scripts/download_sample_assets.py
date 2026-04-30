@@ -4,7 +4,6 @@ Sample asset downloader for Project Rift
 Downloads free placeholder assets that match the LoL aesthetic
 """
 
-import os
 from pathlib import Path
 
 import requests

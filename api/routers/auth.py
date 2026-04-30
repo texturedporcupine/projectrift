@@ -68,15 +68,21 @@ async def outreach_callback(
     if not outreach_oauth_configured():
         raise HTTPException(status_code=400, detail="Outreach OAuth is not configured")
 
+    client_id = settings.OUTREACH_CLIENT_ID
+    client_secret = settings.OUTREACH_CLIENT_SECRET
+    redirect_uri = settings.OUTREACH_REDIRECT_URI
+    if client_id is None or client_secret is None or redirect_uri is None:
+        raise HTTPException(status_code=400, detail="Outreach OAuth is not configured")
+
     try:
         response = httpx.post(
             OUTREACH_TOKEN_URL,
             data={
                 "grant_type": "authorization_code",
                 "code": code,
-                "redirect_uri": settings.OUTREACH_REDIRECT_URI,
+                "redirect_uri": redirect_uri,
             },
-            auth=(settings.OUTREACH_CLIENT_ID, settings.OUTREACH_CLIENT_SECRET),
+            auth=(client_id, client_secret),
             timeout=10,
         )
         response.raise_for_status()

@@ -33,7 +33,6 @@ async def ingest_event(
     payload: EventPayload,
     _: None = Depends(verify_webhook_secret),
 ) -> EventResponse:
-    _ = request
     db = DatabaseQueries()
 
     if db.check_duplicate_event(

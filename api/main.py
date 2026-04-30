@@ -2,11 +2,13 @@
 
 import logging
 from contextlib import asynccontextmanager
+from typing import cast
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.types import ExceptionHandler
 
 from api import __version__
 from api.config import settings
@@ -27,7 +29,9 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("Starting Project Rift API v%s", __version__)
     logger.info("Environment: %s", settings.ENVIRONMENT)
-    logger.info("Database: %s:%s/%s", settings.DB_HOST, settings.DB_PORT, settings.DB_NAME)
+    logger.info(
+        "Database: %s:%s/%s", settings.DB_HOST, settings.DB_PORT, settings.DB_NAME
+    )
     logger.info("Rate limit: %s requests/minute", settings.RATE_LIMIT_PER_MINUTE)
     start_scheduler()
 
@@ -49,7 +53,10 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(
+    RateLimitExceeded,
+    cast(ExceptionHandler, _rate_limit_exceeded_handler),
+)
 
 _DEV_ORIGINS = [
     "http://localhost",

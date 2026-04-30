@@ -6,6 +6,7 @@ import os
 import random
 import sys
 from pathlib import Path
+from typing import Any
 
 import requests
 from dotenv import load_dotenv
@@ -57,7 +58,7 @@ def seed_direct() -> None:
     from database.queries import DatabaseQueries
 
     db = DatabaseQueries()
-    samples = [
+    samples: list[tuple[str, str, dict[str, Any]]] = [
         ("manual", "call_dial", {}),
         ("manual", "call_connect", {"prospect_name": "Ada"}),
         ("manual", "email_sent", {"subject": "Hello"}),

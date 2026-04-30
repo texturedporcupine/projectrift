@@ -26,9 +26,7 @@ def cleanup_old_events(days: int, dry_run: bool) -> None:
 
     conn = psycopg2.connect(os.environ["DATABASE_URL"])
     cur = conn.cursor()
-    cur.execute(
-        "SELECT COUNT(*) FROM raw_events WHERE created_at < %s", (cutoff,)
-    )
+    cur.execute("SELECT COUNT(*) FROM raw_events WHERE created_at < %s", (cutoff,))
     (count,) = cur.fetchone()
     cur.close()
     conn.close()
