@@ -6,6 +6,16 @@ from typing import Any, Dict, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
+class RootResponse(BaseModel):
+    name: str
+    version: str
+    docs: str
+    health: str
+    webhook_ingest: str
+    current_stats: str
+    endpoints: Dict[str, str]
+
+
 class EventPayload(BaseModel):
     source: str = Field(
         ...,

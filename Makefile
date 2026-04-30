@@ -3,12 +3,13 @@
 -include .env
 export
 
-.PHONY: help install install-dev start start-api start-hud stop test db-migrate db-seed clean health webhook-test dbt-run
+.PHONY: help install install-dev start start-api start-hud stop test format lint db-migrate db-seed clean health webhook-test dbt-run
 
 .DEFAULT_GOAL := help
 
 API_HOST ?= 0.0.0.0
 API_PORT ?= 8000
+PYTHON ?= python3
 
 help:
 	@echo "Project Rift (MVP)"
@@ -19,6 +20,9 @@ help:
 	@echo "  make start-hud     Streamlit HUD (foreground)"
 	@echo "  make start         API + HUD in background (logs in logs/)"
 	@echo "  make stop          stop background API + HUD"
+	@echo "  make test          run pytest with coverage"
+	@echo "  make format        run black and isort"
+	@echo "  make lint          run flake8 and mypy"
 	@echo "  make health        curl GET /api/v1/health"
 	@echo "  make webhook-test  POST sample event"
 	@echo "  make dbt-run       run dbt models"
@@ -26,10 +30,10 @@ help:
 	@echo "Docker: docker compose up -d postgres"
 
 install:
-	python -m pip install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements.txt
 
 install-dev: install
-	python -m pip install -r requirements-dev.txt
+	$(PYTHON) -m pip install -r requirements-dev.txt
 
 start: logs-dir
 	@echo "Starting API on http://$(API_HOST):$(API_PORT) ..."
@@ -56,20 +60,28 @@ db-migrate:
 	psql "$(DATABASE_URL)" -v ON_ERROR_STOP=1 -f database/init_db.sql
 
 db-seed:
-	python scripts/seed_data.py --direct
+	$(PYTHON) scripts/seed_data.py --direct
 
 test:
-	pytest tests/ -q
+	$(PYTHON) -m pytest
+
+format:
+	$(PYTHON) -m black api app database scripts tests
+	$(PYTHON) -m isort api app database scripts tests
+
+lint:
+	$(PYTHON) -m flake8 api app database scripts tests
+	$(PYTHON) -m mypy api app database scripts tests
 
 health:
-	@curl -s "http://127.0.0.1:$(API_PORT)/api/v1/health" | python -m json.tool
+	@curl -s "http://127.0.0.1:$(API_PORT)/api/v1/health" | $(PYTHON) -m json.tool
 
 webhook-test:
 	@curl -s -X POST "http://127.0.0.1:$(API_PORT)/api/v1/webhook/ingest" \
 	  -H "Content-Type: application/json" \
 	  -H "X-RIFT-SECRET: $(WEBHOOK_SECRET)" \
 	  -d '{"source":"manual","event_type":"call_dial","metadata":{"note":"make webhook-test"}}' \
-	  | python -m json.tool
+	  | $(PYTHON) -m json.tool
 
 dbt-run:
 	cd dbt_project && DBT_PROFILES_DIR=. dbt run

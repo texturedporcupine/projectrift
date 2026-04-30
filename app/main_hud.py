@@ -17,28 +17,9 @@ from app.components.xp_bar import (
     render_xp_bar,
 )
 from database.queries import DatabaseQueries
+from database.ranks import rank_index
 
 load_dotenv()
-
-RANK_ORDER = (
-    "Iron",
-    "Bronze",
-    "Silver",
-    "Gold",
-    "Platinum",
-    "Emerald",
-    "Diamond",
-    "Master",
-    "Grandmaster",
-    "Challenger",
-)
-
-
-def _rank_index(name: str) -> int:
-    try:
-        return RANK_ORDER.index(name)
-    except ValueError:
-        return -1
 
 
 st.set_page_config(
@@ -135,7 +116,7 @@ def check_for_meeting_booked(current_meetings: int, previous_meetings: int) -> b
 
 
 def rank_up_sound(current_rank: str, previous_rank: str) -> bool:
-    if _rank_index(current_rank) > _rank_index(previous_rank):
+    if rank_index(current_rank) > rank_index(previous_rank):
         play_sound("level_up.mp3")
         return True
     return False

@@ -13,6 +13,7 @@ from api.config import settings
 from api.database import cleanup_database_connections
 from api.routers import auth, health, outreach, webhook
 from api.scheduler import start_scheduler, stop_scheduler
+from api.schemas import RootResponse
 from api.security import limiter
 
 logging.basicConfig(
@@ -74,16 +75,22 @@ app.include_router(auth.router)
 app.include_router(outreach.router)
 
 
-@app.get("/", tags=["root"], summary="API root")
-async def root():
-    return {
-        "name": "Project Rift API",
-        "version": __version__,
-        "docs": "/docs" if settings.ENVIRONMENT == "development" else "disabled",
+@app.get("/", response_model=RootResponse, tags=["root"], summary="API root")
+async def root() -> RootResponse:
+    endpoints = {
         "health": "/api/v1/health",
         "webhook_ingest": "/api/v1/webhook/ingest",
         "current_stats": "/api/v1/stats/current",
     }
+    return RootResponse(
+        name="Project Rift API",
+        version=__version__,
+        docs="/docs" if settings.ENVIRONMENT == "development" else "disabled",
+        health=endpoints["health"],
+        webhook_ingest=endpoints["webhook_ingest"],
+        current_stats=endpoints["current_stats"],
+        endpoints=endpoints,
+    )
 
 
 @app.middleware("http")

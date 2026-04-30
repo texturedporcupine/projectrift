@@ -43,7 +43,7 @@ async def get_current_stats(request: Request) -> CurrentStats:
     except Exception as e:
         logger.error("Error retrieving stats: %s", e, exc_info=True)
         raise HTTPException(
-            status_code=500, detail=f"Failed to retrieve statistics: {e}"
+            status_code=500, detail="Failed to retrieve statistics"
         ) from e
 
     return CurrentStats(

@@ -1,11 +1,14 @@
 """PostgreSQL connection pool for the API (health checks)."""
 
+from __future__ import annotations
+
 import logging
 from contextlib import contextmanager
 from typing import Generator
 
 import psycopg2
 from psycopg2 import pool
+from psycopg2.extensions import connection as PgConnection
 from psycopg2.extras import RealDictCursor
 
 from api.config import settings
@@ -17,7 +20,7 @@ class DatabaseConnectionPool:
     def __init__(self, min_connections: int = 1, max_connections: int = 10):
         self.min_connections = min_connections
         self.max_connections = max_connections
-        self._pool = None
+        self._pool: pool.SimpleConnectionPool | None = None
         self._initialize_pool()
 
     def _initialize_pool(self) -> None:
@@ -33,7 +36,7 @@ class DatabaseConnectionPool:
             self.max_connections,
         )
 
-    def get_connection(self):
+    def get_connection(self) -> PgConnection:
         if self._pool is None:
             raise RuntimeError("Connection pool not initialized")
         conn = self._pool.getconn()
@@ -41,7 +44,7 @@ class DatabaseConnectionPool:
             raise RuntimeError("Connection pool exhausted")
         return conn
 
-    def return_connection(self, conn) -> None:
+    def return_connection(self, conn: PgConnection | None) -> None:
         if self._pool is not None and conn is not None:
             self._pool.putconn(conn)
 
@@ -51,7 +54,7 @@ class DatabaseConnectionPool:
             logger.info("All database connections closed")
 
     @contextmanager
-    def get_cursor(self) -> Generator:
+    def get_cursor(self) -> Generator[RealDictCursor, None, None]:
         conn = None
         cursor = None
         try:
