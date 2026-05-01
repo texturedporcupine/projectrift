@@ -15,7 +15,9 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/api/v1/outreach", tags=["outreach"])
 
 
-@router.post("/sync", response_model=OutreachSyncResult, summary="Run Outreach sync now")
+@router.post(
+    "/sync", response_model=OutreachSyncResult, summary="Run Outreach sync now"
+)
 async def manual_sync():
     if not outreach_client.is_authorized():
         raise HTTPException(
@@ -31,7 +33,9 @@ async def manual_sync():
     )
 
 
-@router.get("/status", response_model=OutreachStatus, summary="Outreach integration status")
+@router.get(
+    "/status", response_model=OutreachStatus, summary="Outreach integration status"
+)
 async def sync_status():
     tokens = outreach_client.load_tokens()
     return OutreachStatus(

@@ -4,12 +4,14 @@ from __future__ import annotations
 
 import os
 from contextlib import contextmanager
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, Generator, List, Optional
 
 import psycopg2
 from dotenv import load_dotenv
 from psycopg2.extras import Json, RealDictCursor
+
+from database.ranks import calculate_rank
 
 load_dotenv()
 
@@ -22,11 +24,12 @@ class DatabaseQueries:
         if not self.connection_string:
             raise ValueError("DATABASE_URL not found in environment variables")
 
+    def get_connection(self):
+        return psycopg2.connect(self.connection_string)
+
     @contextmanager
-    def _transaction(
-        self, *, dict_rows: bool = False
-    ) -> Generator[tuple, None, None]:
-        conn = psycopg2.connect(self.connection_string)
+    def _transaction(self, *, dict_rows: bool = False) -> Generator[tuple, None, None]:
+        conn = self.get_connection()
         cur = conn.cursor(cursor_factory=RealDictCursor if dict_rows else None)
         try:
             yield conn, cur
@@ -137,15 +140,14 @@ class DatabaseQueries:
             return [dict(r) for r in cur.fetchall()]
 
     def cleanup_old_events(self, days: int = 90) -> int:
-        cutoff_date = datetime.now() - timedelta(days=days)
         with self._transaction() as (_, cur):
             cur.execute(
                 """
                 DELETE FROM raw_events
-                WHERE created_at < %s
+                WHERE created_at < NOW() - (%s::integer * INTERVAL '1 day')
                 RETURNING id
                 """,
-                (cutoff_date,),
+                (days,),
             )
             return cur.rowcount
 
@@ -214,20 +216,7 @@ class DatabaseQueries:
 
     @staticmethod
     def _calculate_rank(meetings_booked: int) -> str:
-        rank_map = {
-            0: "Iron",
-            1: "Bronze",
-            2: "Silver",
-            3: "Gold",
-            4: "Platinum",
-            5: "Emerald",
-            6: "Diamond",
-            7: "Master",
-            8: "Grandmaster",
-        }
-        if meetings_booked >= 9:
-            return "Challenger"
-        return rank_map.get(meetings_booked, "Iron")
+        return calculate_rank(meetings_booked)
 
 
 def get_db() -> DatabaseQueries:

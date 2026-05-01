@@ -1,7 +1,7 @@
 """Health and stats endpoints."""
 
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Request
 
@@ -13,7 +13,9 @@ from database.queries import DatabaseQueries
 
 logger = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/api/v1", tags=["health"], responses={503: {"description": "Unavailable"}})
+router = APIRouter(
+    prefix="/api/v1", tags=["health"], responses={503: {"description": "Unavailable"}}
+)
 
 
 @router.get("/health", response_model=HealthResponse, summary="Health check")
@@ -29,12 +31,14 @@ async def health_check(request: Request) -> HealthResponse:
     return HealthResponse(
         status="healthy",
         database="connected",
-        timestamp=datetime.now(),
+        timestamp=datetime.now(timezone.utc),
         version=__version__,
     )
 
 
-@router.get("/stats/current", response_model=CurrentStats, summary="Current gamification stats")
+@router.get(
+    "/stats/current", response_model=CurrentStats, summary="Current gamification stats"
+)
 @limiter.limit(get_rate_limit_for_endpoint("stats"))
 async def get_current_stats(request: Request) -> CurrentStats:
     _ = request
@@ -43,7 +47,7 @@ async def get_current_stats(request: Request) -> CurrentStats:
     except Exception as e:
         logger.error("Error retrieving stats: %s", e, exc_info=True)
         raise HTTPException(
-            status_code=500, detail=f"Failed to retrieve statistics: {e}"
+            status_code=500, detail="Failed to retrieve statistics"
         ) from e
 
     return CurrentStats(

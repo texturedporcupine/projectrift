@@ -2,17 +2,20 @@
 
 import logging
 from contextlib import asynccontextmanager
+from typing import cast
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.types import ExceptionHandler
 
 from api import __version__
 from api.config import settings
 from api.database import cleanup_database_connections
 from api.routers import auth, health, outreach, webhook
 from api.scheduler import start_scheduler, stop_scheduler
+from api.schemas import RootResponse
 from api.security import limiter
 
 logging.basicConfig(
@@ -26,7 +29,9 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     logger.info("Starting Project Rift API v%s", __version__)
     logger.info("Environment: %s", settings.ENVIRONMENT)
-    logger.info("Database: %s:%s/%s", settings.DB_HOST, settings.DB_PORT, settings.DB_NAME)
+    logger.info(
+        "Database: %s:%s/%s", settings.DB_HOST, settings.DB_PORT, settings.DB_NAME
+    )
     logger.info("Rate limit: %s requests/minute", settings.RATE_LIMIT_PER_MINUTE)
     start_scheduler()
 
@@ -48,7 +53,10 @@ app = FastAPI(
 )
 
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_exception_handler(
+    RateLimitExceeded,
+    cast(ExceptionHandler, _rate_limit_exceeded_handler),
+)
 
 _DEV_ORIGINS = [
     "http://localhost",
@@ -74,16 +82,22 @@ app.include_router(auth.router)
 app.include_router(outreach.router)
 
 
-@app.get("/", tags=["root"], summary="API root")
-async def root():
-    return {
-        "name": "Project Rift API",
-        "version": __version__,
-        "docs": "/docs" if settings.ENVIRONMENT == "development" else "disabled",
+@app.get("/", response_model=RootResponse, tags=["root"], summary="API root")
+async def root() -> RootResponse:
+    endpoints = {
         "health": "/api/v1/health",
         "webhook_ingest": "/api/v1/webhook/ingest",
         "current_stats": "/api/v1/stats/current",
     }
+    return RootResponse(
+        name="Project Rift API",
+        version=__version__,
+        docs="/docs" if settings.ENVIRONMENT == "development" else "disabled",
+        health=endpoints["health"],
+        webhook_ingest=endpoints["webhook_ingest"],
+        current_stats=endpoints["current_stats"],
+        endpoints=endpoints,
+    )
 
 
 @app.middleware("http")

@@ -70,6 +70,9 @@ def refresh_tokens() -> Optional[Dict[str, Any]]:
     if tokens is None:
         logger.error("Cannot refresh: no tokens stored")
         return None
+    if settings.OUTREACH_CLIENT_ID is None or settings.OUTREACH_CLIENT_SECRET is None:
+        logger.error("Cannot refresh: Outreach OAuth client credentials are missing")
+        return None
     try:
         response = httpx.post(
             OUTREACH_TOKEN_URL,

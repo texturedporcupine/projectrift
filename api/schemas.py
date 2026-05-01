@@ -1,22 +1,46 @@
 """Pydantic schemas for API requests and responses."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from api.constants import (
+    ALLOWED_EVENT_TYPE_SET,
+    ALLOWED_EVENT_TYPES,
+    ALLOWED_SOURCE_PATTERN,
+)
+
+
+class RootResponse(BaseModel):
+    name: str
+    version: str
+    docs: str
+    health: str
+    webhook_ingest: str
+    current_stats: str
+    endpoints: Dict[str, str]
+
+
+def _empty_metadata() -> Dict[str, Any]:
+    return {}
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
 
 
 class EventPayload(BaseModel):
     source: str = Field(
         ...,
         description="Source of the event",
-        pattern="^(outreach|nooks|manual|zapier)$",
+        pattern=ALLOWED_SOURCE_PATTERN,
     )
     event_type: str = Field(
         ..., description="Type of sales event", min_length=1, max_length=50
     )
     metadata: Optional[Dict[str, Any]] = Field(
-        default_factory=dict, description="Additional event metadata"
+        default_factory=_empty_metadata, description="Additional event metadata"
     )
     timestamp: Optional[datetime] = Field(
         default=None, description="Event timestamp (defaults to now if not provided)"
@@ -39,22 +63,17 @@ class EventPayload(BaseModel):
     @field_validator("event_type")
     @classmethod
     def validate_event_type(cls, v: str) -> str:
-        allowed_types = [
-            "call_dial",
-            "call_connect",
-            "meeting_booked",
-            "meeting_attended",
-            "email_sent",
-        ]
-        if v not in allowed_types:
+        if v not in ALLOWED_EVENT_TYPE_SET:
             raise ValueError(
-                f"Unknown event type: {v}. Allowed: {', '.join(allowed_types)}"
+                f"Unknown event type: {v}. Allowed: {', '.join(ALLOWED_EVENT_TYPES)}"
             )
         return v
 
     @field_validator("metadata")
     @classmethod
-    def validate_metadata_size(cls, v: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
+    def validate_metadata_size(
+        cls, v: Optional[Dict[str, Any]]
+    ) -> Optional[Dict[str, Any]]:
         if v is not None and len(str(v)) > 5000:
             raise ValueError("Metadata too large (max 5000 characters)")
         return v
@@ -137,7 +156,7 @@ class CurrentStats(BaseModel):
 class ErrorResponse(BaseModel):
     detail: str
     error_code: Optional[str] = None
-    timestamp: datetime = Field(default_factory=datetime.now)
+    timestamp: datetime = Field(default_factory=_utc_now)
 
     model_config = ConfigDict(
         json_schema_extra={

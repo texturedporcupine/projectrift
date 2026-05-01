@@ -4,11 +4,13 @@ Tests database queries, connections, and data integrity
 """
 
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 
 import pytest
 
+from api.constants import ALLOWED_EVENT_TYPES
 from database.queries import DatabaseQueries
+from database.ranks import RANK_ORDER, calculate_rank
 
 
 @pytest.fixture
@@ -59,16 +61,8 @@ class TestGamificationRules:
 
     def test_all_event_types_have_rules(self, db):
         """Test that all event types have gamification rules"""
-        event_types = [
-            "call_dial",
-            "call_connect",
-            "meeting_booked",
-            "meeting_attended",
-            "email_sent",
-        ]
-
         try:
-            for event_type in event_types:
+            for event_type in ALLOWED_EVENT_TYPES:
                 rule = db.get_gamification_rule(event_type)
                 assert rule is not None, f"Missing rule for {event_type}"
                 assert rule["gold_value"] >= 0
@@ -156,40 +150,15 @@ class TestCurrentStats:
             pytest.skip(f"Database not available: {e}")
 
     def test_rank_calculation(self, db):
-        """Test that rank is calculated correctly from gold"""
+        """Test that rank is calculated from weekly meetings booked."""
         try:
             stats = db.get_current_stats()
 
-            total_gold = stats["total_gold"]
+            meetings_booked = stats["meetings_booked"]
             rank = stats["rank"]
 
-            # Validate rank is one of the valid values
-            valid_ranks = [
-                "Iron",
-                "Bronze",
-                "Silver",
-                "Gold",
-                "Platinum",
-                "Diamond",
-                "Challenger",
-            ]
-            assert rank in valid_ranks
-
-            # Validate rank thresholds
-            if total_gold >= 5000:
-                assert rank == "Challenger"
-            elif total_gold >= 3000:
-                assert rank == "Diamond"
-            elif total_gold >= 1500:
-                assert rank == "Platinum"
-            elif total_gold >= 1000:
-                assert rank == "Gold"
-            elif total_gold >= 500:
-                assert rank == "Silver"
-            elif total_gold >= 200:
-                assert rank == "Bronze"
-            else:
-                assert rank == "Iron"
+            assert rank in RANK_ORDER
+            assert rank == calculate_rank(meetings_booked)
 
         except Exception as e:
             pytest.skip(f"Database not available: {e}")
@@ -224,7 +193,7 @@ class TestDuplicateDetection:
             # Insert an event
             metadata = {
                 "test": "duplicate_test",
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             }
             event_id = db.insert_event(
                 source="manual",
@@ -252,7 +221,7 @@ class TestDuplicateDetection:
             is_duplicate = db.check_duplicate_event(
                 source="manual",
                 event_type="call_dial",
-                metadata={"unique": datetime.now().isoformat()},
+                metadata={"unique": datetime.now(timezone.utc).isoformat()},
                 minutes=5,
             )
 
