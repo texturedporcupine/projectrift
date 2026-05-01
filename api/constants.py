@@ -18,3 +18,6 @@ ALLOWED_SOURCES: Final[tuple[str, ...]] = (
     "manual",
     "zapier",
 )
+
+ALLOWED_EVENT_TYPE_SET: Final[frozenset[str]] = frozenset(ALLOWED_EVENT_TYPES)
+ALLOWED_SOURCE_PATTERN: Final[str] = f"^({'|'.join(ALLOWED_SOURCES)})$"

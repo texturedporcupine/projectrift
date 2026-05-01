@@ -9,6 +9,8 @@ import pytest
 import requests
 from dotenv import load_dotenv
 
+from database.ranks import RANK_ORDER
+
 load_dotenv()
 
 # Configuration
@@ -16,6 +18,13 @@ API_HOST = os.getenv("API_HOST", "localhost")
 API_PORT = os.getenv("API_PORT", 8000)
 WEBHOOK_SECRET = os.getenv("WEBHOOK_SECRET")
 BASE_URL = f"http://{API_HOST}:{API_PORT}"
+EXPECTED_REWARDS = {
+    "call_dial": {"gold_earned": 10, "xp_earned": 5},
+    "call_connect": {"gold_earned": 25, "xp_earned": 15},
+    "email_sent": {"gold_earned": 10, "xp_earned": 3},
+    "meeting_booked": {"gold_earned": 200, "xp_earned": 100},
+    "meeting_attended": {"gold_earned": 500, "xp_earned": 200},
+}
 
 
 @pytest.fixture
@@ -49,8 +58,8 @@ class TestWebhookIntegration:
             assert response.status_code == 201
             data = response.json()
             assert data["status"] == "success"
-            assert data["gold_earned"] == 15
-            assert data["xp_earned"] == 5
+            assert data["gold_earned"] == EXPECTED_REWARDS["call_dial"]["gold_earned"]
+            assert data["xp_earned"] == EXPECTED_REWARDS["call_dial"]["xp_earned"]
 
         except requests.exceptions.ConnectionError:
             pytest.skip("API server not running")
@@ -78,8 +87,10 @@ class TestWebhookIntegration:
             assert response.status_code == 201
             data = response.json()
             assert data["status"] == "success"
-            assert data["gold_earned"] == 100
-            assert data["xp_earned"] == 40
+            assert (
+                data["gold_earned"] == EXPECTED_REWARDS["call_connect"]["gold_earned"]
+            )
+            assert data["xp_earned"] == EXPECTED_REWARDS["call_connect"]["xp_earned"]
 
         except requests.exceptions.ConnectionError:
             pytest.skip("API server not running")
@@ -107,8 +118,10 @@ class TestWebhookIntegration:
             assert response.status_code == 201
             data = response.json()
             assert data["status"] == "success"
-            assert data["gold_earned"] == 1000
-            assert data["xp_earned"] == 500
+            assert (
+                data["gold_earned"] == EXPECTED_REWARDS["meeting_booked"]["gold_earned"]
+            )
+            assert data["xp_earned"] == EXPECTED_REWARDS["meeting_booked"]["xp_earned"]
 
         except requests.exceptions.ConnectionError:
             pytest.skip("API server not running")
@@ -136,8 +149,8 @@ class TestWebhookIntegration:
             assert response.status_code == 201
             data = response.json()
             assert data["status"] == "success"
-            assert data["gold_earned"] == 10
-            assert data["xp_earned"] == 3
+            assert data["gold_earned"] == EXPECTED_REWARDS["email_sent"]["gold_earned"]
+            assert data["xp_earned"] == EXPECTED_REWARDS["email_sent"]["xp_earned"]
 
         except requests.exceptions.ConnectionError:
             pytest.skip("API server not running")
@@ -292,6 +305,7 @@ class TestStatsAfterWebhook:
             stats_after = requests.get(
                 f"{BASE_URL}/api/v1/stats/current", timeout=5
             ).json()
+            assert stats_after["rank"] in RANK_ORDER
 
             # Verify stats increased (unless it was a duplicate)
             if not webhook_response.json().get("duplicate", False):

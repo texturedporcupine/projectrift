@@ -5,7 +5,11 @@ from typing import Any, Dict, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from api.constants import ALLOWED_EVENT_TYPES
+from api.constants import (
+    ALLOWED_EVENT_TYPE_SET,
+    ALLOWED_EVENT_TYPES,
+    ALLOWED_SOURCE_PATTERN,
+)
 
 
 class RootResponse(BaseModel):
@@ -30,7 +34,7 @@ class EventPayload(BaseModel):
     source: str = Field(
         ...,
         description="Source of the event",
-        pattern="^(outreach|nooks|manual|zapier)$",
+        pattern=ALLOWED_SOURCE_PATTERN,
     )
     event_type: str = Field(
         ..., description="Type of sales event", min_length=1, max_length=50
@@ -59,7 +63,7 @@ class EventPayload(BaseModel):
     @field_validator("event_type")
     @classmethod
     def validate_event_type(cls, v: str) -> str:
-        if v not in ALLOWED_EVENT_TYPES:
+        if v not in ALLOWED_EVENT_TYPE_SET:
             raise ValueError(
                 f"Unknown event type: {v}. Allowed: {', '.join(ALLOWED_EVENT_TYPES)}"
             )

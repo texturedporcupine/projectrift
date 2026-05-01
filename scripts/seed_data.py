@@ -12,12 +12,12 @@ import requests
 from dotenv import load_dotenv
 from faker import Faker
 
-from api.constants import ALLOWED_EVENT_TYPES
-
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 load_dotenv()
+
+from api.constants import ALLOWED_EVENT_TYPES  # noqa: E402
 
 fake = Faker()
 
