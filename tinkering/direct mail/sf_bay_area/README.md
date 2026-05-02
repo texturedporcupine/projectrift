@@ -33,6 +33,8 @@ that follow the same structure requested in the brief.
 | `creative/creative_brief_template.md` | Market-neutral creative intake brief |
 | `ops/Cowork_Instructions.md` | Operational prompt for generating campaign collateral |
 | `app/EatTheElephant.jsx` | React task tracker with Bay Area task/pricing updates |
+| `automation/` | Manual-vs-automated operating map plus a CSV-driven campaign ops CLI |
+| `automation/scaling_playbook.md` | Practical roadmap for scaling from files to CRM/payment/signature automations |
 
 ## Notes and assumptions
 
@@ -41,3 +43,11 @@ that follow the same structure requested in the brief.
 - Prospect trackers include category slots and research prompts rather than
   unverified business records.
 - California tax and legal notes are operational guidance, not legal advice.
+
+## Scaling workflow
+
+Start in `automation/california_automation_map.md` to see what should remain
+manual in California and what can be automated. Then use
+`automation/campaign_ops.py` to turn researched prospect CSVs into campaign
+checklists, outreach drafts, agreement drafts, financial summaries, prospect
+validation reports, and category-lock reports.

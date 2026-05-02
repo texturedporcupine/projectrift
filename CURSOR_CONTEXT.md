@@ -56,7 +56,7 @@ and estate planning.
 
 ## Generated Toolkit
 
-The executable assets live in `direct_mail/sf_bay_area/`:
+The executable assets live in `tinkering/direct mail/sf_bay_area/`:
 
 - `business/ca_business_plan.md`
 - `communities/bay_area_communities_guide.md`
@@ -70,3 +70,8 @@ The executable assets live in `direct_mail/sf_bay_area/`:
 - `creative/creative_brief_template.md`
 - `ops/Cowork_Instructions.md`
 - `app/EatTheElephant.jsx`
+- `automation/README.md`
+- `automation/california_automation_map.md`
+- `automation/campaign_workflow.json`
+- `automation/campaign_ops.py`
+- `automation/scaling_playbook.md`
