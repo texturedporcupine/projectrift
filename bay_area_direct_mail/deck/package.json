@@ -1,0 +1,15 @@
+{
+  "name": "bay-area-direct-mail-deck",
+  "version": "1.0.0",
+  "private": true,
+  "description": "5-slide pitch deck generator for the SF Bay Area shared postcard direct mail business (pptxgenjs). Mirror of build_deck.py.",
+  "scripts": {
+    "build": "node build-deck.js",
+    "build:danville": "node build-deck.js --community=danville",
+    "build:sanramon": "node build-deck.js --community=san_ramon",
+    "build:pleasanton": "node build-deck.js --community=pleasanton"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}
