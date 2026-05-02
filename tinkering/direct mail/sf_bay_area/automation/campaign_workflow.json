@@ -1,0 +1,215 @@
+{
+  "version": "2026-05-02",
+  "state": "California",
+  "business_model": "shared_postcard_eddm",
+  "default_assumptions": {
+    "postage_per_piece": 0.247,
+    "printing_estimate_5000": 350,
+    "misc_estimate": 100,
+    "target_households_min": 5000,
+    "target_households_max": 8000,
+    "target_advertisers_min": 6,
+    "target_advertisers_max": 8,
+    "deposit_percent": 50,
+    "final_payment_percent": 50
+  },
+  "pricing_tiers": {
+    "tier_1": {
+      "label": "Premium",
+      "standard_min": 700,
+      "standard_max": 900,
+      "premium_min": 1100,
+      "premium_max": 1400,
+      "communities": ["Danville", "Palo Alto", "Los Altos", "Saratoga", "Piedmont", "Los Gatos"]
+    },
+    "tier_2": {
+      "label": "Strong",
+      "standard_min": 550,
+      "standard_max": 750,
+      "premium_min": 850,
+      "premium_max": 1100,
+      "communities": ["San Ramon", "Pleasanton", "Dublin"]
+    },
+    "tier_3": {
+      "label": "Growth",
+      "standard_min": 400,
+      "standard_max": 600,
+      "premium_min": 650,
+      "premium_max": 850,
+      "communities": ["Fremont", "Livermore", "Brentwood", "Rocklin", "Roseville"]
+    }
+  },
+  "phases": [
+    {
+      "name": "Legal setup",
+      "tasks": [
+        {
+          "task": "Choose operating name",
+          "owner": "manual",
+          "manual_reason": "Name choice and brand risk need owner judgment."
+        },
+        {
+          "task": "File FBN with county recorder if using a fictitious name",
+          "owner": "manual",
+          "automation": "Use the checklist to track filing date, publication deadline, and renewal date.",
+          "manual_reason": "County-specific forms, signatures, identity steps, and payment must be completed by the owner."
+        },
+        {
+          "task": "Publish FBN notice for 4 consecutive weeks within 30 days",
+          "owner": "manual",
+          "automation": "Track publication dates and affidavit receipt.",
+          "manual_reason": "Requires placement with an adjudicated newspaper and affidavit retention."
+        },
+        {
+          "task": "Confirm city business license requirements",
+          "owner": "manual",
+          "automation": "Record license number, renewal date, and fees in campaign records.",
+          "manual_reason": "Local licensing rules differ by city and county."
+        },
+        {
+          "task": "Confirm CDTFA handling of bundled print/postage charges",
+          "owner": "manual",
+          "automation": "Keep the decision memo in the campaign folder.",
+          "manual_reason": "California sales-tax treatment depends on the actual offering and should be confirmed professionally."
+        }
+      ]
+    },
+    {
+      "name": "Route research",
+      "tasks": [
+        {
+          "task": "Use USPS EDDM tool to select carrier routes",
+          "owner": "manual",
+          "manual_reason": "USPS route data is authoritative and must be verified in the live EDDM tool."
+        },
+        {
+          "task": "Record route IDs and household counts",
+          "owner": "hybrid",
+          "automation": "Enter the total household count into campaign JSON and generate economics."
+        },
+        {
+          "task": "Screenshot selected routes",
+          "owner": "manual",
+          "automation": "Store screenshot filenames in the campaign folder."
+        }
+      ]
+    },
+    {
+      "name": "Prospecting",
+      "tasks": [
+        {
+          "task": "Research 30-40 local businesses",
+          "owner": "hybrid",
+          "automation": "Use the prospect CSV template to standardize intake."
+        },
+        {
+          "task": "Verify non-competing categories",
+          "owner": "automated_with_review",
+          "automation": "Run category-locks and validate-prospects before outreach."
+        },
+        {
+          "task": "Find decision-maker contact information",
+          "owner": "manual",
+          "manual_reason": "Contact quality and permission context need human review."
+        }
+      ]
+    },
+    {
+      "name": "Sales outreach",
+      "tasks": [
+        {
+          "task": "Draft email 1, day-3 follow-up, and day-7 value-add",
+          "owner": "automated_with_review",
+          "automation": "Run outreach to generate markdown drafts, then review before sending."
+        },
+        {
+          "task": "Generate call openers",
+          "owner": "automated_with_review",
+          "automation": "Use category pitch scripts and prospect notes."
+        },
+        {
+          "task": "Track outreach stage",
+          "owner": "hybrid",
+          "automation": "Use the prospect tracker status fields or a CRM import."
+        }
+      ]
+    },
+    {
+      "name": "Closing and production",
+      "tasks": [
+        {
+          "task": "Collect deposit",
+          "owner": "manual",
+          "manual_reason": "Category is not locked until payment clears."
+        },
+        {
+          "task": "Issue agreement",
+          "owner": "automated_with_review",
+          "automation": "Run agreements to generate markdown drafts, then review and send through your chosen signature workflow."
+        },
+        {
+          "task": "Collect creative assets",
+          "owner": "hybrid",
+          "automation": "Use the creative brief template to standardize requests."
+        },
+        {
+          "task": "Route proof approvals",
+          "owner": "manual",
+          "automation": "Track written approval status in the checklist.",
+          "manual_reason": "A human must verify claims, offers, disclaimers, and final layout."
+        },
+        {
+          "task": "Collect final payment",
+          "owner": "manual",
+          "manual_reason": "Print release should only happen after funds clear."
+        }
+      ]
+    },
+    {
+      "name": "Mailing",
+      "tasks": [
+        {
+          "task": "Submit EDDM paperwork",
+          "owner": "manual",
+          "automation": "Use generated campaign economics to verify postage.",
+          "manual_reason": "USPS submission occurs in USPS systems."
+        },
+        {
+          "task": "Bundle postcards to USPS specs",
+          "owner": "manual",
+          "manual_reason": "Physical mail prep must match USPS acceptance rules."
+        },
+        {
+          "task": "Drop at destination delivery unit",
+          "owner": "manual",
+          "manual_reason": "Physical handoff and acceptance cannot be automated."
+        },
+        {
+          "task": "Pay USPS postage",
+          "owner": "manual",
+          "automation": "Record receipt metadata in the campaign folder."
+        }
+      ]
+    },
+    {
+      "name": "Renewal",
+      "tasks": [
+        {
+          "task": "Follow up 2 weeks after delivery",
+          "owner": "automated_with_review",
+          "automation": "Generate reminders and renewal email drafts."
+        },
+        {
+          "task": "Collect results and testimonials",
+          "owner": "manual",
+          "automation": "Store response notes in the campaign report."
+        },
+        {
+          "task": "Pitch multi-campaign renewal",
+          "owner": "hybrid",
+          "automation": "Use financials and testimonial notes to draft the renewal offer."
+        }
+      ]
+    }
+  ]
+}
