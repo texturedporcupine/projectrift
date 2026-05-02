@@ -1,0 +1,12 @@
+# Generated files
+*.pptx
+*.xlsx
+*.pdf
+
+# Node
+scripts/node_modules/
+scripts/package-lock.json
+
+# Python
+__pycache__/
+*.pyc

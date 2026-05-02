@@ -1,0 +1,16 @@
+{
+  "name": "bayarea-directmail-tools",
+  "version": "1.0.0",
+  "description": "Bay Area Direct Mail — pitch deck generator and campaign tools",
+  "scripts": {
+    "deck": "node generate_pitch_deck.js",
+    "deck:danville": "node generate_pitch_deck.js danville",
+    "deck:san_ramon": "node generate_pitch_deck.js san_ramon",
+    "deck:pleasanton": "node generate_pitch_deck.js pleasanton",
+    "deck:dublin": "node generate_pitch_deck.js dublin",
+    "deck:los_gatos": "node generate_pitch_deck.js los_gatos"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}
