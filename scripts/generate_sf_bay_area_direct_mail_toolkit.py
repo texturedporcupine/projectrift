@@ -86,18 +86,102 @@ COMMUNITIES = [
 
 
 ALL_MARKETS = [
-    ("Danville", "94526", "$185K+", "18,000+", "1", "HVAC, landscaping, pool, dentist, med spa"),
-    ("San Ramon", "94582/94583", "$160K+", "30,000+", "1-2", "HVAC, tutoring, family dentist, pest control"),
-    ("Pleasanton", "94566/94588", "$155K+", "28,000+", "2", "Pool, landscaping, orthodontics, cleaning"),
-    ("Los Gatos", "95030/95032", "$200K+", "12,000+", "1", "Med spa, luxury home, pool, dentist"),
-    ("Saratoga", "95070", "$250K+", "10,000+", "1", "Luxury renovation, med spa, estate planning"),
-    ("Los Altos Hills", "94022/94024", "$300K+", "8,000+", "1", "Premium landscaping, concierge medicine"),
-    ("Palo Alto South", "94303", "$210K+", "12,000+", "1", "Tutoring, dentist, home services"),
-    ("Dublin", "94568", "$145K+", "22,000+", "2", "HVAC, pest control, tutoring, family dentist"),
-    ("Fremont Warm Springs", "94539", "$140K+", "15,000+", "2-3", "HVAC, pest control, cleaning, tutoring"),
-    ("Livermore", "94550/94551", "$125K+", "20,000+", "2-3", "HVAC, landscaping, pest control, dentist"),
-    ("Brentwood", "94513", "$115K+", "22,000+", "3", "Pool, HVAC, pest control, roofing"),
-    ("Rocklin/Roseville", "95765/95777", "$120K+", "35,000+", "3", "HVAC, pest control, dentist, landscaping"),
+    (
+        "Danville",
+        "94526",
+        "$185K+",
+        "18,000+",
+        "1",
+        "HVAC, landscaping, pool, dentist, med spa",
+    ),
+    (
+        "San Ramon",
+        "94582/94583",
+        "$160K+",
+        "30,000+",
+        "1-2",
+        "HVAC, tutoring, family dentist, pest control",
+    ),
+    (
+        "Pleasanton",
+        "94566/94588",
+        "$155K+",
+        "28,000+",
+        "2",
+        "Pool, landscaping, orthodontics, cleaning",
+    ),
+    (
+        "Los Gatos",
+        "95030/95032",
+        "$200K+",
+        "12,000+",
+        "1",
+        "Med spa, luxury home, pool, dentist",
+    ),
+    (
+        "Saratoga",
+        "95070",
+        "$250K+",
+        "10,000+",
+        "1",
+        "Luxury renovation, med spa, estate planning",
+    ),
+    (
+        "Los Altos Hills",
+        "94022/94024",
+        "$300K+",
+        "8,000+",
+        "1",
+        "Premium landscaping, concierge medicine",
+    ),
+    (
+        "Palo Alto South",
+        "94303",
+        "$210K+",
+        "12,000+",
+        "1",
+        "Tutoring, dentist, home services",
+    ),
+    (
+        "Dublin",
+        "94568",
+        "$145K+",
+        "22,000+",
+        "2",
+        "HVAC, pest control, tutoring, family dentist",
+    ),
+    (
+        "Fremont Warm Springs",
+        "94539",
+        "$140K+",
+        "15,000+",
+        "2-3",
+        "HVAC, pest control, cleaning, tutoring",
+    ),
+    (
+        "Livermore",
+        "94550/94551",
+        "$125K+",
+        "20,000+",
+        "2-3",
+        "HVAC, landscaping, pest control, dentist",
+    ),
+    (
+        "Brentwood",
+        "94513",
+        "$115K+",
+        "22,000+",
+        "3",
+        "Pool, HVAC, pest control, roofing",
+    ),
+    (
+        "Rocklin/Roseville",
+        "95765/95777",
+        "$120K+",
+        "35,000+",
+        "3",
+        "HVAC, pest control, dentist, landscaping",
+    ),
 ]
 
 
@@ -128,7 +212,9 @@ def render_market_table() -> str:
         "| --- | --- | ---: | ---: | --- | --- |",
     ]
     for row in ALL_MARKETS:
-        lines.append(f"| {row[0]} | {row[1]} | {row[2]} | {row[3]} | {row[4]} | {row[5]} |")
+        lines.append(
+            f"| {row[0]} | {row[1]} | {row[2]} | {row[3]} | {row[4]} | {row[5]} |"
+        )
     return "\n".join(lines)
 
 
@@ -543,7 +629,7 @@ def pitch_scripts() -> str:
             [
                 f"## {category}",
                 "",
-                f"**Opening hook:** \"I am building a category-exclusive postcard for [community] homeowners, and the {category.lower()} slot is one of the categories that tends to make the most sense because it connects directly to homeowner demand: {hook.lower()}.\"",
+                f'**Opening hook:** "I am building a category-exclusive postcard for [community] homeowners, and the {category.lower()} slot is one of the categories that tends to make the most sense because it connects directly to homeowner demand: {hook.lower()}."',
                 "",
                 "**Value frame:**",
                 "",
@@ -554,7 +640,7 @@ def pitch_scripts() -> str:
                 "",
                 "**Close:**",
                 "",
-                f"\"If you want the {category.lower()} category, I can hold it with a 50% deposit while the card is designed. You will approve the proof before anything prints.\"",
+                f'"If you want the {category.lower()} category, I can hold it with a 50% deposit while the card is designed. You will approve the proof before anything prints."',
                 "",
             ]
         )
@@ -562,21 +648,21 @@ def pitch_scripts() -> str:
         [
             "## Universal objection handler",
             "",
-            "### \"We do not do direct mail.\"",
+            '### "We do not do direct mail."',
             "",
-            "\"That makes sense. This is a smaller, route-specific campaign rather than a big generic mailer. The reason it may be worth considering is the category exclusivity and the homeowner targeting. You are not paying to reach the whole Bay Area.\"",
+            '"That makes sense. This is a smaller, route-specific campaign rather than a big generic mailer. The reason it may be worth considering is the category exclusivity and the homeowner targeting. You are not paying to reach the whole Bay Area."',
             "",
-            "### \"We tried direct mail before.\"",
+            '### "We tried direct mail before."',
             "",
-            "\"Totally fair. The two things I would want to understand are where it mailed and whether you had category exclusivity. This version is focused on a defined local route set and only one business per category, so the card is not crowded with direct competitors.\"",
+            '"Totally fair. The two things I would want to understand are where it mailed and whether you had category exclusivity. This version is focused on a defined local route set and only one business per category, so the card is not crowded with direct competitors."',
             "",
-            "### \"It is too expensive.\"",
+            '### "It is too expensive."',
             "",
-            "\"I get it. The best way to look at it is break-even. If the ad is [price] and your average new customer is worth [value], how many responses would make it worthwhile? For many home-service categories the answer is one or two.\"",
+            '"I get it. The best way to look at it is break-even. If the ad is [price] and your average new customer is worth [value], how many responses would make it worthwhile? For many home-service categories the answer is one or two."',
             "",
-            "### \"I need to think about it.\"",
+            '### "I need to think about it."',
             "",
-            "\"Of course. The only timing issue is category exclusivity. I can send the route count and sample layout today, and if you want the category I can hold it once the deposit is in.\"",
+            '"Of course. The only timing issue is category exclusivity. I can send the route count and sample layout today, and if you want the category I can hold it once the deposit is in."',
         ]
     )
     return "\n".join(scripts)
@@ -1109,7 +1195,9 @@ def generate_tracker(path: Path, community_name: str, zips: str) -> None:
     for cell in ws[1]:
         cell.fill = fills["header"]
         cell.font = Font(color="FFFFFF", bold=True)
-        cell.alignment = Alignment(horizontal="center", vertical="center", wrap_text=True)
+        cell.alignment = Alignment(
+            horizontal="center", vertical="center", wrap_text=True
+        )
 
     priority = 1
     for category, hook in CATEGORIES:
@@ -1141,7 +1229,10 @@ def generate_tracker(path: Path, community_name: str, zips: str) -> None:
     validations = [
         ("I2:I200", '"IDEAL,STRONG,GOOD,UNRATED,DISQUALIFIED"'),
         ("J2:J200", '"OPEN,HELD,LOCKED,CONFLICT,RELEASED"'),
-        ("K2:K200", '"Not started,Email 1 sent,Follow-up sent,Called,Meeting booked,Proposal sent,Closed won,Closed lost,Nurture"'),
+        (
+            "K2:K200",
+            '"Not started,Email 1 sent,Follow-up sent,Called,Meeting booked,Proposal sent,Closed won,Closed lost,Nurture"',
+        ),
     ]
     for range_ref, formula in validations:
         validation = DataValidation(type="list", formula1=formula, allow_blank=True)
@@ -1176,9 +1267,15 @@ def generate_tracker(path: Path, community_name: str, zips: str) -> None:
     instructions.append(["Prospect tracker instructions"])
     instructions.append([f"Community: {community_name}"])
     instructions.append([f"Zip code(s): {zips}"])
-    instructions.append(["Before outreach, replace placeholders with verified local businesses."])
+    instructions.append(
+        ["Before outreach, replace placeholders with verified local businesses."]
+    )
     instructions.append(["Lock only one business per category after deposit clears."])
-    instructions.append(["Validate EDDM route count at eddm.usps.com before quoting final household count."])
+    instructions.append(
+        [
+            "Validate EDDM route count at eddm.usps.com before quoting final household count."
+        ]
+    )
     instructions["A1"].font = Font(bold=True, size=14)
     instructions.column_dimensions["A"].width = 110
 
@@ -1203,7 +1300,9 @@ def generate_deck(path: Path) -> None:
         fill.fore_color.rgb = color
 
     def add_title(slide, title, subtitle=None):
-        box = slide.shapes.add_textbox(Inches(0.7), Inches(0.55), Inches(12), Inches(1.2))
+        box = slide.shapes.add_textbox(
+            Inches(0.7), Inches(0.55), Inches(12), Inches(1.2)
+        )
         tf = box.text_frame
         p = tf.paragraphs[0]
         p.text = title
@@ -1217,7 +1316,9 @@ def generate_deck(path: Path) -> None:
             p2.font.color.rgb = muted
 
     def add_body(slide, lines, left=0.9, top=2.0, width=11.7, height=4.4):
-        box = slide.shapes.add_textbox(Inches(left), Inches(top), Inches(width), Inches(height))
+        box = slide.shapes.add_textbox(
+            Inches(left), Inches(top), Inches(width), Inches(height)
+        )
         tf = box.text_frame
         tf.word_wrap = True
         for idx, line in enumerate(lines):
@@ -1232,7 +1333,11 @@ def generate_deck(path: Path) -> None:
     # Slide 1
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_bg(slide)
-    add_title(slide, "Own the Mailbox", "Shared postcard advertising for high-income Bay Area homeowner communities")
+    add_title(
+        slide,
+        "Own the Mailbox",
+        "Shared postcard advertising for high-income Bay Area homeowner communities",
+    )
     add_body(
         slide,
         [
@@ -1241,7 +1346,9 @@ def generate_deck(path: Path) -> None:
             "Professional design, print coordination, USPS EDDM delivery, and post-campaign follow-up.",
         ],
     )
-    shape = slide.shapes.add_shape(1, Inches(0.9), Inches(6.25), Inches(4.2), Inches(0.55))
+    shape = slide.shapes.add_shape(
+        1, Inches(0.9), Inches(6.25), Inches(4.2), Inches(0.55)
+    )
     shape.fill.solid()
     shape.fill.fore_color.rgb = green
     shape.line.color.rgb = green
@@ -1255,10 +1362,16 @@ def generate_deck(path: Path) -> None:
     # Slide 2
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_bg(slide)
-    add_title(slide, "Why these communities", "High-income households, homeowner density, and strong local service demand")
+    add_title(
+        slide,
+        "Why these communities",
+        "High-income households, homeowner density, and strong local service demand",
+    )
     rows = 4
     cols = 5
-    table_shape = slide.shapes.add_table(rows, cols, Inches(0.75), Inches(2.0), Inches(11.8), Inches(2.2))
+    table_shape = slide.shapes.add_table(
+        rows, cols, Inches(0.75), Inches(2.0), Inches(11.8), Inches(2.2)
+    )
     table = table_shape.table
     header = ["Community", "Zip", "HHI", "Homes", "Tier"]
     data = [
@@ -1294,7 +1407,11 @@ def generate_deck(path: Path) -> None:
     # Slide 3
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_bg(slide)
-    add_title(slide, "How the campaign works", "A simple managed process for local advertisers")
+    add_title(
+        slide,
+        "How the campaign works",
+        "A simple managed process for local advertisers",
+    )
     add_body(
         slide,
         [
@@ -1309,8 +1426,14 @@ def generate_deck(path: Path) -> None:
     # Slide 4
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_bg(slide)
-    add_title(slide, "Pricing and break-even math", "Bay Area pricing with a practical ROI frame")
-    table_shape = slide.shapes.add_table(4, 3, Inches(0.75), Inches(1.9), Inches(6.1), Inches(2.4))
+    add_title(
+        slide,
+        "Pricing and break-even math",
+        "Bay Area pricing with a practical ROI frame",
+    )
+    table_shape = slide.shapes.add_table(
+        4, 3, Inches(0.75), Inches(1.9), Inches(6.1), Inches(2.4)
+    )
     table = table_shape.table
     pricing = [
         ["Tier", "Standard", "Premium"],
@@ -1342,7 +1465,9 @@ def generate_deck(path: Path) -> None:
     # Slide 5
     slide = prs.slides.add_slide(prs.slide_layouts[6])
     set_bg(slide)
-    add_title(slide, "Reserve your category", "Next step for interested local advertisers")
+    add_title(
+        slide, "Reserve your category", "Next step for interested local advertisers"
+    )
     add_body(
         slide,
         [
@@ -1383,7 +1508,9 @@ def generate_all() -> None:
     write_text(ROOT / "CURSOR_CONTEXT.md", cursor_context())
     write_text(BASE / "README.md", readme())
     write_text(BASE / "business" / "ca_business_plan.md", business_plan())
-    write_text(BASE / "communities" / "bay_area_communities_guide.md", communities_guide())
+    write_text(
+        BASE / "communities" / "bay_area_communities_guide.md", communities_guide()
+    )
     write_text(BASE / "outreach" / "three_email_sequence.md", outreach_sequence())
     write_text(BASE / "pitch_scripts" / "category_pitch_scripts.md", pitch_scripts())
     write_text(BASE / "agreements" / "service_agreement_ca.md", agreement_md())
@@ -1391,7 +1518,9 @@ def generate_all() -> None:
     write_text(BASE / "ops" / "Cowork_Instructions.md", cowork_instructions())
     write_text(BASE / "deck" / "pitch-deck_bay-area_outline.md", deck_outline())
     write_text(BASE / "app" / "EatTheElephant.jsx", eat_the_elephant())
-    generate_tracker(BASE / "trackers" / "prospect-tracker_danville-94526.xlsx", "Danville", "94526")
+    generate_tracker(
+        BASE / "trackers" / "prospect-tracker_danville-94526.xlsx", "Danville", "94526"
+    )
     generate_tracker(
         BASE / "trackers" / "prospect-tracker_san-ramon-94582-94583.xlsx",
         "San Ramon",
