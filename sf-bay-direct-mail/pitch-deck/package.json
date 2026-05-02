@@ -1,0 +1,12 @@
+{
+  "name": "sf-bay-pitch-deck",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Generate Bay Area shared-postcard pitch deck (pptxgenjs)",
+  "scripts": {
+    "build": "node generate_pitch_deck.js"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

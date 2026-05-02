@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EatTheElephant — SF Bay Area</title>
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        max-width: 52rem;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        line-height: 1.45;
+      }
+      label.task {
+        display: block;
+        margin: 0.35rem 0;
+      }
+      h1 {
+        font-size: 1.35rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+        margin-top: 1.5rem;
+      }
+      .toolbar {
+        margin: 1rem 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script type="text/babel">
+      const { useState, useMemo } = React;
+
+      const STORAGE_KEY = "eatTheElephant_sf_bay_v1";
+
+      if (!window.storage) {
+        window.storage = {
+          getItem: (k) => window.localStorage.getItem(k),
+          setItem: (k, v) => window.localStorage.setItem(k, v),
+        };
+      }
+
+      const phases = [
+        {
+          id: "setup",
+          title: "Setup — California + first community",
+          tasks: [
+            { id: "s1", text: "File FBN with county recorder; schedule 4-week newspaper publication" },
+            { id: "s2", text: "Confirm city/county business license requirements for your base city" },
+            { id: "s3", text: "EDDM route research: Danville 94526 — screenshot 2-3 routes, 5k-8k HH" },
+            { id: "s4", text: "EDDM route research: San Ramon 94582/94583 — Bishop Ranch corridor focus" },
+            { id: "s5", text: "EDDM route research: Pleasanton 94566/94588 — backup first campaign" },
+          ],
+        },
+        {
+          id: "prep",
+          title: "Prep — materials & pricing",
+          tasks: [
+            { id: "p1", text: "Finalize Bay Area pitch deck (community stats + Tier 2 pricing table)" },
+            { id: "p2", text: "Export prospect tracker for first community (Danville or San Ramon)" },
+            { id: "p3", text: "Set campaign pricing: Tier 2 standard $550-750 / premium $850-1100; deposits 50/50" },
+            { id: "p4", text: "Load 3-email sequence templates with community + zip placeholders" },
+          ],
+        },
+        {
+          id: "outreach",
+          title: "Outreach — 30-40 prospects",
+          tasks: [
+            { id: "o1", text: "Build prospect list: 8-10 non-competing categories across commercial corridors" },
+            { id: "o2", text: "Send Email 1 cold batch (10-15); log status in tracker" },
+            { id: "o3", text: "Day-3 follow-ups to non-responders" },
+            { id: "o4", text: "Day-7 value-add closes; phone walk-ins for Tier-1 targets" },
+          ],
+        },
+        {
+          id: "close",
+          title: "Close — contracts & creative",
+          tasks: [
+            { id: "c1", text: "Signed agreements + 50% deposits for 5-6 advertisers minimum" },
+            { id: "c2", text: "Creative brief to designer; collect license #s and disclaimers" },
+            { id: "c3", text: "Proof approvals in writing (email) from every advertiser" },
+            { id: "c4", text: "Collect final 50%; print + bundle for DDU drop" },
+          ],
+        },
+        {
+          id: "delivery",
+          title: "Delivery & renewal",
+          tasks: [
+            { id: "d1", text: "USPS EDDM paperwork at eddm.usps.com; pay $0.247/pc at DDU" },
+            { id: "d2", text: "Two-week follow-up: testimonials + performance check" },
+            { id: "d3", text: "Pitch renewal at 15-20% multi-campaign discount" },
+          ],
+        },
+      ];
+
+      function loadDone() {
+        try {
+          const raw = window.storage.getItem(STORAGE_KEY);
+          if (!raw) return {};
+          return JSON.parse(raw);
+        } catch {
+          return {};
+        }
+      }
+
+      function saveDone(map) {
+        try {
+          window.storage.setItem(STORAGE_KEY, JSON.stringify(map));
+        } catch {
+          /* ignore */
+        }
+      }
+
+      function App() {
+        const [energy, setEnergy] = useState("all");
+        const [doneMap, setDoneMap] = useState(() => loadDone());
+
+        const visibleTasks = useMemo(() => {
+          const high = (t) => /EDDM|deposit|agreement|DDU|50%|FBN/i.test(t.text);
+          return phases.map((phase) => ({
+            ...phase,
+            tasks: phase.tasks.filter((t) => (energy === "high" ? high(t) : true)),
+          }));
+        }, [energy]);
+
+        const toggle = (id) => {
+          setDoneMap((prev) => {
+            const next = { ...prev, [id]: !prev[id] };
+            saveDone(next);
+            return next;
+          });
+        };
+
+        const checkedCount = Object.values(doneMap).filter(Boolean).length;
+
+        return (
+          <>
+            <div className="toolbar">
+              <label>
+                Energy filter{" "}
+                <select value={energy} onChange={(e) => setEnergy(e.target.value)}>
+                  <option value="all">All tasks</option>
+                  <option value="high">High impact only (EDDM, deposits, DDU)</option>
+                </select>
+              </label>
+            </div>
+            <h1>EatTheElephant — SF Bay Area</h1>
+            <p>
+              Check tasks as you go. State persists via <code>window.storage</code>. Tier defaults: prep task p3.
+            </p>
+            {visibleTasks.map((phase) => (
+              <section key={phase.id}>
+                <h2>{phase.title}</h2>
+                {phase.tasks.map((task) => (
+                  <label key={task.id} className="task">
+                    <input
+                      type="checkbox"
+                      checked={!!doneMap[task.id]}
+                      onChange={() => toggle(task.id)}
+                    />{" "}
+                    {task.text}
+                  </label>
+                ))}
+              </section>
+            ))}
+            <p>Tasks checked: {checkedCount}</p>
+          </>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById("root"));
+      root.render(<App />);
+    </script>
+  </body>
+</html>

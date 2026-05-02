@@ -11,3 +11,6 @@ logs/*.log
 dbt_project/target/
 dbt_project/dbt_packages/
 dbt_project/logs/
+
+# SF Bay direct mail toolkit (Node deps local only)
+sf-bay-direct-mail/pitch-deck/node_modules/
