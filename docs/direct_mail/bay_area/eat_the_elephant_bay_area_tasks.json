@@ -1,0 +1,146 @@
+{
+  "project": "SF Bay Area Shared Postcard Direct Mail Launch",
+  "market": "San Francisco Bay Area",
+  "defaultCommunity": "Danville",
+  "defaultZipCodes": ["94526"],
+  "phases": [
+    {
+      "id": "setup",
+      "name": "Setup",
+      "tasks": [
+        {
+          "id": "s1",
+          "title": "Choose initial legal setup",
+          "energy": "medium",
+          "notes": "Start as a sole proprietor unless an accountant or attorney recommends an LLC. If using a business name, file an FBN with the county recorder."
+        },
+        {
+          "id": "s2",
+          "title": "File California FBN and local license",
+          "energy": "high",
+          "notes": "File the fictitious business name with the county recorder, publish for 4 consecutive weeks within 30 days, and check city/county business license requirements."
+        },
+        {
+          "id": "s3",
+          "title": "Research Danville 94526 EDDM routes",
+          "energy": "medium",
+          "notes": "Use eddm.usps.com to identify 2-3 routes totaling 5,000-7,000 households with strong residential density."
+        },
+        {
+          "id": "s4",
+          "title": "Research San Ramon 94582/94583 backup routes",
+          "energy": "medium",
+          "notes": "Save route counts and screenshots for Bishop Ranch and nearby master-planned residential corridors."
+        },
+        {
+          "id": "s5",
+          "title": "Research Pleasanton 94566/94588 alternate routes",
+          "energy": "medium",
+          "notes": "Identify neighborhoods with high homeownership and nearby commercial corridors for future campaigns."
+        }
+      ]
+    },
+    {
+      "id": "prep",
+      "name": "Campaign Prep",
+      "tasks": [
+        {
+          "id": "p1",
+          "title": "Build 30-40 business prospect list",
+          "energy": "high",
+          "notes": "Cover 8-10 non-competing categories before outreach: HVAC, pest control, dentistry, pool, landscaping, plumbing, roofing, cleaning, tutoring, med spa."
+        },
+        {
+          "id": "p2",
+          "title": "Lock pricing by community tier",
+          "energy": "medium",
+          "notes": "Use Tier 1 Danville pricing: $700-900 standard ad space and $1,100-1,400 premium placement. Offer founding-partner pricing only for the first campaign."
+        },
+        {
+          "id": "p3",
+          "title": "Prepare first campaign ROI math",
+          "energy": "low",
+          "notes": "For 5,000 households at $700, most advertisers need 1-3 new customers to break even depending on ticket size and margin."
+        },
+        {
+          "id": "p4",
+          "title": "Draft first email batch",
+          "energy": "medium",
+          "notes": "Personalize the three-email sequence for 10 prospects and keep one exclusive category slot per campaign."
+        },
+        {
+          "id": "p5",
+          "title": "Prepare pitch deck PDF",
+          "energy": "medium",
+          "notes": "Use pitch_deck_bay_area.md as source copy. Export to PDF before sending or bringing to in-person visits."
+        }
+      ]
+    },
+    {
+      "id": "sales",
+      "name": "Sales",
+      "tasks": [
+        {
+          "id": "sa1",
+          "title": "Send first 10 cold emails",
+          "energy": "medium",
+          "notes": "Prioritize high-ticket local services serving Danville and San Ramon homeowners."
+        },
+        {
+          "id": "sa2",
+          "title": "Make phone follow-ups",
+          "energy": "high",
+          "notes": "Call businesses that opened or replied to the cold email. Lead with category exclusivity and household count."
+        },
+        {
+          "id": "sa3",
+          "title": "Collect 50% deposits",
+          "energy": "high",
+          "notes": "Do not send to design until the agreement is signed and the initial deposit is paid."
+        }
+      ]
+    },
+    {
+      "id": "production",
+      "name": "Production and Mail Drop",
+      "tasks": [
+        {
+          "id": "pr1",
+          "title": "Collect creative inputs",
+          "energy": "medium",
+          "notes": "Use creative_brief_template.md for every advertiser."
+        },
+        {
+          "id": "pr2",
+          "title": "Approve proof with all advertisers",
+          "energy": "high",
+          "notes": "Get written approvals and final balances before printing."
+        },
+        {
+          "id": "pr3",
+          "title": "Complete EDDM paperwork and DDU drop-off",
+          "energy": "high",
+          "notes": "Bundle by USPS route requirements and pay $0.247 per piece at drop-off."
+        }
+      ]
+    },
+    {
+      "id": "renewal",
+      "name": "Follow-up and Renewal",
+      "tasks": [
+        {
+          "id": "r1",
+          "title": "Follow up two weeks after delivery",
+          "energy": "medium",
+          "notes": "Ask each advertiser about calls, appointments, redemptions, and qualitative feedback."
+        },
+        {
+          "id": "r2",
+          "title": "Pitch renewal discount",
+          "energy": "medium",
+          "notes": "Offer 15-20% multi-campaign discount to businesses that renew before the next campaign is opened."
+        }
+      ]
+    }
+  ]
+}
