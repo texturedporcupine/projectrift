@@ -1,0 +1,15 @@
+{
+  "name": "sf-bayarea-pitch-deck",
+  "version": "1.0.0",
+  "description": "Shared postcard direct mail pitch deck generator for SF Bay Area",
+  "main": "generate_deck.js",
+  "scripts": {
+    "build": "node generate_deck.js",
+    "build:danville": "node generate_deck.js --community danville",
+    "build:sanramon": "node generate_deck.js --community sanramon",
+    "build:pleasanton": "node generate_deck.js --community pleasanton"
+  },
+  "dependencies": {
+    "pptxgenjs": "^3.12.0"
+  }
+}

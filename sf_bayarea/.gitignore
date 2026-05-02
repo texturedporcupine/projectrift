@@ -1,0 +1,5 @@
+node_modules/
+*.pptx
+*.xlsx
+prospect_tracker/output/
+pitch_deck/pitch-deck_*.pptx
